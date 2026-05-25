@@ -1,0 +1,19 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: homebrew-tap
+  description: Internal Homebrew tap for things we want installable without cloning a repo. Experimental — nothing's actually shipped through it yet.
+  annotations:
+    github.com/project-slug: siglify/homebrew-private
+    backstage.io/source-location: url:https://github.com/siglify/homebrew-private
+    siglify.ai/gcp-project: none
+  tags:
+    - homebrew
+    - distribution
+    - cli
+spec:
+  type: library
+  lifecycle: experimental
+  owner: group:default/founders
+  system: distribution
