@@ -37,7 +37,7 @@ class SiglifyBaseAT01 < Formula
     plist_target = "#{home}/Library/LaunchAgents/com.siglify.base.update.plist"
     File.write(plist_target, plist_rendered)
 
-    system "launchctl", "unload", plist_target
+    quiet_system "launchctl", "unload", plist_target
     system "launchctl", "load", plist_target
 
     if build.with?("wire")

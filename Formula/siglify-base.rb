@@ -31,7 +31,9 @@ class SiglifyBase < Formula
     File.write(plist_target, plist_rendered)
 
     # Reload the agent so the new version is picked up.
-    system "launchctl", "unload", plist_target
+    # quiet_system tolerates a non-zero exit on unload (first install:
+    # the agent isn't loaded yet; subsequent installs: it is).
+    quiet_system "launchctl", "unload", plist_target
     system "launchctl", "load", plist_target
 
     if build.with?("wire")
