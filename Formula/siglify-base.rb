@@ -5,8 +5,8 @@ class SiglifyBase < Formula
   # respecting the user's git credential helper (`gh auth setup-git`).
   # GitHub's /archive/refs/tags/*.tar.gz URL cannot be authenticated via
   # HOMEBREW_GITHUB_API_TOKEN — that env var is API-only, not for downloads.
-  url "https://github.com/siglify/base.git", tag: "v0.1.1"
-  version "0.1.1"
+  url "https://github.com/siglify/base.git", tag: "v0.1.2"
+  version "0.1.2"
   license "Proprietary"
 
   depends_on "asakin/tap/dragoman"

@@ -2,8 +2,8 @@ class SiglifyBaseAT01 < Formula
   desc "Siglify dev-laptop baseline (Claude config, hooks, siglify CLI) — pinned to 0.1.x"
   homepage "https://github.com/siglify/base"
   # Git strategy — see siglify-base.rb for rationale.
-  url "https://github.com/siglify/base.git", tag: "v0.1.1"
-  version "0.1.1"
+  url "https://github.com/siglify/base.git", tag: "v0.1.2"
+  version "0.1.2"
   license "Proprietary"
 
   # Versioned formula for rollback. The unpinned `siglify-base` always
