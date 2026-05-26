@@ -1,8 +1,11 @@
 class SiglifyBase < Formula
   desc "Siglify dev-laptop baseline (Claude config, hooks, siglify CLI)"
   homepage "https://github.com/siglify/base"
-  url "https://github.com/siglify/base/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "85173e41c6d828b41d514a944fddcd5ba8d5dae5d6bd2c9f275db6283a52bb3c"
+  # Git strategy (not tarball) so `git clone` runs against the private repo,
+  # respecting the user's git credential helper (`gh auth setup-git`).
+  # GitHub's /archive/refs/tags/*.tar.gz URL cannot be authenticated via
+  # HOMEBREW_GITHUB_API_TOKEN — that env var is API-only, not for downloads.
+  url "https://github.com/siglify/base.git", tag: "v0.1.0"
   version "0.1.0"
   license "Proprietary"
 
