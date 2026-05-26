@@ -5,14 +5,12 @@ class SiglifyBase < Formula
   # respecting the user's git credential helper (`gh auth setup-git`).
   # GitHub's /archive/refs/tags/*.tar.gz URL cannot be authenticated via
   # HOMEBREW_GITHUB_API_TOKEN — that env var is API-only, not for downloads.
-  url "https://github.com/siglify/base.git", tag: "v0.1.2"
-  version "0.1.2"
+  url "https://github.com/siglify/base.git", tag: "v0.1.3"
+  version "0.1.3"
   license "Proprietary"
 
   depends_on "asakin/tap/dragoman"
   depends_on "jq"
-
-  option "without-wire", "Skip ~/.claude/ wiring; run `siglify wire` manually when ready"
 
   def install
     bin.install "bin/siglify"
@@ -21,61 +19,33 @@ class SiglifyBase < Formula
     (etc/"siglify-base").install "etc/com.siglify.base.update.plist"
   end
 
-  def post_install
-    home = ENV["HOME"]
-
-    ohai "Preparing ~/.siglify/"
-    mkdir_p "#{home}/.siglify/hooks"
-    ln_sf pkgshare/"CLAUDE.md", "#{home}/.siglify/CLAUDE.md"
-    ln_sf pkgshare/"hooks/temporal.py", "#{home}/.siglify/hooks/temporal.py"
-
-    ohai "Installing launchd agent"
-    plist_template = (etc/"siglify-base/com.siglify.base.update.plist").read
-    plist_rendered = plist_template.gsub("__HOME__", home)
-    plist_target = "#{home}/Library/LaunchAgents/com.siglify.base.update.plist"
-    mkdir_p "#{home}/Library/LaunchAgents"  # defensive: some fresh macOS installs lack this
-    File.write(plist_target, plist_rendered)
-
-    # launchctl: unload first (quiet — fine if not loaded), then load.
-    # Load failures are recoverable (user can launchctl load manually),
-    # so we opoo and continue rather than raise + abort post_install.
-    quiet_system "launchctl", "unload", plist_target
-    if quiet_system("launchctl", "load", plist_target)
-      ohai "launchd agent loaded (com.siglify.base.update)"
-    else
-      opoo "launchctl load failed for #{plist_target}"
-      opoo "  Try manually: launchctl load #{plist_target}"
-    end
-
-    if build.with?("wire")
-      ohai "Wiring siglify-base into ~/.claude/ (idempotent)"
-      if quiet_system(bin/"siglify", "wire")
-        ohai "wire complete"
-      else
-        opoo "siglify wire failed during post_install"
-        opoo "  Run manually:  siglify wire"
-        opoo "  Diagnose:      siglify status"
-      end
-    else
-      ohai "Skipped ~/.claude/ wiring (--without-wire). Run `siglify wire` when ready."
-    end
-
-    ohai "post_install complete (see `siglify status` for full state)"
-  end
+  # NO post_install. macOS sandboxes brew's post_install and blocks writes to
+  # ~/, so symlinks into ~/.siglify/, the launchd plist into
+  # ~/Library/LaunchAgents/, and the ~/.claude/ wiring all fail with EPERM.
+  # All user-space setup is done by `siglify wire` — the user runs it once
+  # after install (the caveats below tell them to). It's idempotent and
+  # safe to re-run any time, so `brew upgrade` doesn't need to re-trigger it.
 
   def caveats
     <<~EOS
-      siglify-base installed.
+      siglify-base installed under #{prefix}.
 
-        ~/.siglify/CLAUDE.md            → org Claude baseline (imported into ~/.claude/CLAUDE.md)
-        ~/.siglify/hooks/temporal.py    → temporal context hook (wired into ~/.claude/settings.json)
-        ~/Library/LaunchAgents/com.siglify.base.update.plist  (daily upgrade ~3am)
+      One more step — run this to set up your laptop:
 
-      Try:  siglify           # welcome banner
-      Try:  siglify status    # what's installed + wired
+          siglify wire
+
+      That command (idempotent, re-runnable any time) will:
+        • Symlink ~/.siglify/CLAUDE.md and ~/.siglify/hooks/temporal.py
+        • Install + load the daily-upgrade launchd agent
+        • Add the SIGLIFY-MANAGED @-import block to the TOP of ~/.claude/CLAUDE.md
+        • Register the temporal hook on UserPromptSubmit in ~/.claude/settings.json
+          (and scrub any stale temporal.py hook entries first)
+
+      Then:  siglify status    # confirm everything's wired
+      Try:   siglify           # welcome banner
 
       Personal preferences (Spotify on, custom src_root, watched files):
-        Drop a JSON file at ~/.siglify/hooks/temporal.local.json.
+        Drop a JSON file at ~/.siglify/hooks/temporal.json.
         See `siglify-base` README for the schema.
 
       Inner-source: PRs welcome at https://github.com/siglify/base
