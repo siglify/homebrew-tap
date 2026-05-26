@@ -1,8 +1,8 @@
 class SiglifyBaseAT01 < Formula
   desc "Siglify dev-laptop baseline (Claude config, hooks, siglify CLI) — pinned to 0.1.x"
   homepage "https://github.com/siglify/base"
-  url "https://github.com/siglify/base/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "85173e41c6d828b41d514a944fddcd5ba8d5dae5d6bd2c9f275db6283a52bb3c"
+  # Git strategy — see siglify-base.rb for rationale.
+  url "https://github.com/siglify/base.git", tag: "v0.1.0"
   version "0.1.0"
   license "Proprietary"
 

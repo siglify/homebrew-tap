@@ -24,17 +24,18 @@ the source tarball, which requires GitHub auth on the org.
 **Set up GitHub auth for brew:**
 
 ```bash
-# Option A — let `gh` install a credential helper that brew picks up.
-gh auth login
-gh auth setup-git
-
-# Option B — set HOMEBREW_GITHUB_API_TOKEN explicitly. Generate a token
-# with `repo:read` scope on the siglify org; add to your shell rc:
-echo 'export HOMEBREW_GITHUB_API_TOKEN="ghp_..."' >> ~/.zshrc
+gh auth login         # if you haven't already
+gh auth setup-git     # configures git's credential helper to use gh's token
 ```
 
-Without auth, `brew install siglify/tap/siglify-base` fails with a
-404 from GitHub when fetching the tarball.
+That's it. Our private formulae use the **git URL strategy**
+(`url "...base.git", tag: "v0.1.0"`), which makes brew run `git clone`
+under the hood. `git clone` uses the credential helper that
+`gh auth setup-git` configures, so auth flows automatically.
+
+Note: `HOMEBREW_GITHUB_API_TOKEN` does NOT work for source downloads —
+it auths GitHub API calls only. The git URL strategy sidesteps the
+problem entirely; no per-user env var required.
 
 ## OSS formulae (public source)
 
