@@ -13,6 +13,12 @@ class SiglifyBase < Formula
   depends_on "jq"
 
   def install
+    # Bake the formula's version into the CLI's default VERSION constant
+    # so `siglify version` reports the installed Cellar version (instead
+    # of whatever was hardcoded in bin/siglify at tag time).
+    inreplace "bin/siglify",
+              /VERSION="\$\{SIGLIFY_BASE_VERSION:-[0-9.]+\}"/,
+              "VERSION=\"${SIGLIFY_BASE_VERSION:-#{version}}\""
     bin.install "bin/siglify"
     pkgshare.install "share/CLAUDE.md"
     pkgshare.install "share/hooks"

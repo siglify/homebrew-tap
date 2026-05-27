@@ -15,6 +15,9 @@ class SiglifyBaseAT01 < Formula
   depends_on "jq"
 
   def install
+    inreplace "bin/siglify",
+              /VERSION="\$\{SIGLIFY_BASE_VERSION:-[0-9.]+\}"/,
+              "VERSION=\"${SIGLIFY_BASE_VERSION:-#{version}}\""
     bin.install "bin/siglify"
     pkgshare.install "share/CLAUDE.md"
     pkgshare.install "share/hooks"
