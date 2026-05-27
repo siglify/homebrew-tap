@@ -22,7 +22,10 @@ class SiglifyBase < Formula
     bin.install "bin/siglify"
     pkgshare.install "share/CLAUDE.md"
     pkgshare.install "share/hooks"
-    (etc/"siglify-base").install "etc/com.siglify.base.update.plist"
+    # Ship all scheduler templates regardless of OS — the install is
+    # tiny, and `siglify wire` picks the right one (launchd on macOS,
+    # systemd user timer on Linux) at wire-time.
+    (etc/"siglify-base").install Dir["etc/*"]
   end
 
   # NO post_install. macOS sandboxes brew's post_install and blocks writes to
@@ -42,7 +45,11 @@ class SiglifyBase < Formula
 
       That command (idempotent, re-runnable any time) will:
         • Symlink ~/.siglify/CLAUDE.md and ~/.siglify/hooks/temporal.py
-        • Install + load the daily-upgrade launchd agent
+        • Install + activate the daily-upgrade scheduler:
+            macOS → launchd agent in ~/Library/LaunchAgents/
+            Linux → systemd user timer in ~/.config/systemd/user/
+                    (one-time: sudo loginctl enable-linger $USER, so the
+                    timer fires when you're logged out)
         • Add the SIGLIFY-MANAGED @-import block to the TOP of ~/.claude/CLAUDE.md
         • Register the temporal hook on UserPromptSubmit in ~/.claude/settings.json
           (and scrub any stale temporal.py hook entries first)

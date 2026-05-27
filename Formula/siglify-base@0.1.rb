@@ -21,7 +21,7 @@ class SiglifyBaseAT01 < Formula
     bin.install "bin/siglify"
     pkgshare.install "share/CLAUDE.md"
     pkgshare.install "share/hooks"
-    (etc/"siglify-base").install "etc/com.siglify.base.update.plist"
+    (etc/"siglify-base").install Dir["etc/*"]
   end
 
   # See siglify-base.rb for why there's no post_install — `siglify wire`
