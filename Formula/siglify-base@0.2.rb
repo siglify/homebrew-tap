@@ -1,4 +1,4 @@
-class SiglifyBase < Formula
+class SiglifyBaseAT02 < Formula
   desc "Siglify dev-laptop baseline (Claude config, hooks, siglify CLI)"
   homepage "https://github.com/siglify/base"
   # Git strategy (not tarball) so `git clone` runs against the private repo,
@@ -8,6 +8,7 @@ class SiglifyBase < Formula
   url "https://github.com/siglify/base.git", tag: "v0.2.0"
   version "0.2.0"
   license "Proprietary"
+  keg_only :versioned_formula
 
   depends_on "asakin/tap/dragoman"
   depends_on "jq"
