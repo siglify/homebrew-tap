@@ -1,12 +1,16 @@
 class SiglifyBase < Formula
   desc "Siglify dev-laptop baseline (Claude config, hooks, siglify CLI)"
-  homepage "https://github.com/siglify/base"
+  homepage "https://github.com/siglify/homebrew-base"
   # Git strategy (not tarball) so `git clone` runs against the private repo,
   # respecting the user's git credential helper (`gh auth setup-git`).
   # GitHub's /archive/refs/tags/*.tar.gz URL cannot be authenticated via
   # HOMEBREW_GITHUB_API_TOKEN — that env var is API-only, not for downloads.
-  url "https://github.com/siglify/base.git", tag: "v0.2.1"
-  version "0.2.1"
+  #
+  # v0.3.0 is a migration release: on `siglify upgrade` it automatically
+  # re-taps from siglify/tap → siglify/base and untaps this tap. This is
+  # the last version that will be published to siglify/homebrew-tap.
+  url "https://github.com/siglify/homebrew-base.git", tag: "v0.3.0"
+  version "0.3.0"
   license "Proprietary"
 
   depends_on "asakin/tap/dragoman"
